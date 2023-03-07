@@ -14,6 +14,12 @@ export class Stream {
     loadedEvents.forEach((event) => this.#events.push(event));
   }
 
+  listenForEvents() : void {
+    this.#storage.subscribe(event => {
+      this.#events.push(event);
+    });
+  }
+
   getSize(): number {
     return this.#events.length;
   }

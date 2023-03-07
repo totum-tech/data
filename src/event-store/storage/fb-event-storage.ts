@@ -32,6 +32,9 @@ class FirebaseEventStorage implements IStorage {
       };
     });
   }
+
+  subscribe(listener) {
+  }
 }
 
 export default FirebaseEventStorage;

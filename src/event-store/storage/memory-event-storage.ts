@@ -19,6 +19,9 @@ class InMemoryEventRepo implements IStorage {
       resolve();
     });
   }
+
+  subscribe(listener) {
+  }
 }
 
 export default InMemoryEventRepo;

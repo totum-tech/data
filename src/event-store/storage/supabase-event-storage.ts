@@ -1,12 +1,12 @@
 import { IRecordedEvent, IStorage } from '../types';
-import {SupabaseClient} from "@supabase/supabase-js";
+import {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
 class SupabaseEventStorage implements IStorage {
   supabase: SupabaseClient;
-  db: string;
+  channel: RealtimeChannel;
 
   constructor({ supabase, db }: { supabase: SupabaseClient; db: string }) {
     this.supabase = supabase;
-    this.db = db;
+    this.channel = this.supabase.channel('eventStorageSubscriber')
   }
 
   async save(event: IRecordedEvent): Promise<void> {
@@ -24,6 +24,20 @@ class SupabaseEventStorage implements IStorage {
     }
 
     return events;
+  }
+
+  subscribe(listener: any) : void {
+    this.channel
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'events' },
+        payload => listener(payload.new)
+      )
+      .subscribe(status => console.info('EventStorage', status));
+  }
+
+  async unsubscribe() : Promise<void> {
+    await this.supabase.removeChannel(this.channel);
   }
 }
 
