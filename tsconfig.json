@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2015",
+    "strict": false,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "dist/",
+    "declaration": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*", "tests/**/*", "start.ts"],
+  "exclude": ["node_modules", ".eslintrc.js", "jest.config.js"]
+}
