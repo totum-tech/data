@@ -4,6 +4,7 @@ export { CommandBus, Command, AggregateRoot } from './cqrs';
 
 /* EVENT STORE */
 export { EventStore } from './event-store/event-store';
+export { Stream } from './event-store/stream';
 export {
   IEventStore,
   IEventStoreSubscriber,
