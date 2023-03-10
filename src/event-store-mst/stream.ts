@@ -1,4 +1,4 @@
-import {IObservableArray, values} from 'mobx';
+import {IObservableArray, observable, values} from 'mobx';
 import {Instance, types} from 'mobx-state-tree';
 import {parseISO} from 'date-fns';
 
@@ -24,7 +24,6 @@ export const RecordedEvent = types.model('RecordedEvent', {
   } else {
     return snapshot
   }
-
 });
 
 type RecordedEventType = Instance<typeof RecordedEvent>;
@@ -79,6 +78,10 @@ export function createEventStream(params) {
     getEvents() {
       return values(stream.events);
     },
+    get allEvents() {
+      const events = stream.events;
+      return values(events);
+    }
     // eventsForStream(streamId: string) {
     //   function filterFn(event: RecordedEventType): boolean {
     //     return event.streamId === streamId;
