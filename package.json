@@ -29,10 +29,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.10.0",
     "@types/faker": "^5.1.5",
+    "date-fns": "^2.29.3",
     "faker": "^5.1.0",
     "firebase": "^8.2.5",
-    "mobx": "^6.0.4",
-    "mobx-state-tree": "^4.0.2",
+    "mobx": "^6.8.0",
+    "mobx-state-tree": "^5.1.8",
     "pull-stream": "^3.6.14",
     "uuid": "^8.3.2",
     "ws": "^7.4.2",
