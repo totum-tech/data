@@ -23,7 +23,7 @@ export class EventStore implements IEventStore {
   }
 
   async hydrate() {
-    await this.#stream.loadEvents();
+    await this.#stream.initialize();
   }
 
   async appendToStream(streamId: StreamId, events: Event<any, any>[]) {
