@@ -4,6 +4,7 @@ export { CommandBus, Command, AggregateRoot } from './cqrs';
 
 /* EVENT STORE */
 export { EventStore } from './event-store/event-store';
+export { Stream } from './event-store/stream';
 export {
   IEventStore,
   IEventStoreSubscriber,
@@ -16,3 +17,4 @@ export {
 export { Event } from './event-store/event';
 export { default as FirebaseEventStorage } from './event-store/storage/fb-event-storage';
 export { default as MemoryEventStorage } from './event-store/storage/memory-event-storage';
+export { default as SupabaseEventStorage } from './event-store/storage/supabase-event-storage';

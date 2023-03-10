@@ -15,8 +15,15 @@ export class EventStore implements IEventStore {
     this.#subscribers = new SubscribersPerStream();
   }
 
+  async initialize() {
+    await this.hydrate();
+    this.#stream.subscribe(event => {
+      this.#notify([event]);
+    });
+  }
+
   async hydrate() {
-    await this.#stream.loadEvents();
+    await this.#stream.initialize();
   }
 
   async appendToStream(streamId: StreamId, events: Event<any, any>[]) {
@@ -35,8 +42,6 @@ export class EventStore implements IEventStore {
       this.#stream.appendEvent(recordedEvent);
       return recordedEvent;
     });
-
-    this.#notify(recordedEvents);
 
     return { nextExpectedStreamRevision: this.#nextStreamEventRevision(streamId) };
   }
