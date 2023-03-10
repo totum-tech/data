@@ -72,23 +72,23 @@ export function createEventStream(params) {
     isEventRecorded: event => {
       return !!stream.events.get(event.id);
     },
-    // get size() {
-    //   return values(stream.events).length;
-    // },
+    get eventCount() {
+      return values(stream.events).length;
+    },
     getEvents() {
       return values(stream.events);
     },
     get allEvents() {
       const events = stream.events;
       return values(events);
+    },
+    eventsForStream(streamId: string) {
+      function filterFn(event: RecordedEventType): boolean {
+        return event.streamId === streamId;
+      }
+      // @ts-ignore
+      return stream.events.filter(filterFn);
     }
-    // eventsForStream(streamId: string) {
-    //   function filterFn(event: RecordedEventType): boolean {
-    //     return event.streamId === streamId;
-    //   }
-    //   // @ts-ignore
-    //   return stream.events.filter(filterFn);
-    // }
   }));
 
   return EventStream.create({ events: {} });
