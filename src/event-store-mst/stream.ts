@@ -36,6 +36,9 @@ export function createEventStream(params) {
       const loadedEvents = await params.storage.load();
       // @ts-ignore
       loadedEvents.forEach(event => stream.setEvent(event.id, event));
+
+      // @ts-ignore
+      stream.listenForEvents();
     }
 
     function setEvent(id, event) {
