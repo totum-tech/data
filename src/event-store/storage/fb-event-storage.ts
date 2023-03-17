@@ -29,7 +29,7 @@ class FirebaseEventStorage implements IStorage {
       const eventData = event.data();
       const createdAt: firebase.firestore.Timestamp = eventData.createdAt;
       return {
-        id: event.id,
+        id: eventData.id,
         streamId: eventData.streamId,
         streamEventRevision: eventData.streamEventRevision,
         globalEventPosition: eventData.globalEventPosition,
