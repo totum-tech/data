@@ -29,7 +29,7 @@ class FirebaseEventStorage implements IStorage {
       const eventData = event.data();
       const createdAt: firebase.firestore.Timestamp = eventData.createdAt;
       return {
-        id: event.id,
+        id: eventData.id,
         streamId: eventData.streamId,
         streamEventRevision: eventData.streamEventRevision,
         globalEventPosition: eventData.globalEventPosition,
@@ -42,18 +42,18 @@ class FirebaseEventStorage implements IStorage {
   }
 
   subscribe(listener) {
-    console.log('Firebase::Subscribe');
-
-    this.firestore.collection(this.path).onSnapshot(snapshot => {
-      console.log('Snapshot');
-      const changes = snapshot.docChanges();
-      changes.forEach(change => {
-        if (change.type === "added") {
-          const recordData = change.doc.data();
-          listener(formatCreatedAt(recordData));
-        }
-      })
-    });
+    this.firestore.collection(this.path)
+      .orderBy("createdAt")
+      .limitToLast(1)
+      .onSnapshot(snapshot => {
+        const changes = snapshot.docChanges();
+        changes.forEach(change => {
+          if (change.type === "added") {
+            const recordData = change.doc.data();
+            listener(formatCreatedAt(recordData));
+          }
+        });
+      });
   }
 }
 
