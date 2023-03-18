@@ -5,6 +5,7 @@ export { CommandBus, Command, AggregateRoot } from './cqrs';
 /* EVENT STORE */
 export { EventStore } from './event-store/event-store';
 export { Stream } from './event-store/stream';
+export { createEventStream, RecordedEvent } from './event-store-mst/stream';
 export {
   IEventStore,
   IEventStoreSubscriber,

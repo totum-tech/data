@@ -1,6 +1,14 @@
 import { IRecordedEvent, IStorage } from '../types';
 import firebase from 'firebase';
 import 'firebase/firestore';
+import {fromUnixTime} from 'date-fns';
+
+function formatCreatedAt(snapshot) {
+  return {
+    ...snapshot,
+    createdAt: fromUnixTime(snapshot.createdAt.nanoseconds)
+  }
+}
 class FirebaseEventStorage implements IStorage {
   firestore: firebase.firestore.Firestore;
   path: string;
@@ -34,6 +42,18 @@ class FirebaseEventStorage implements IStorage {
   }
 
   subscribe(listener) {
+    console.log('Firebase::Subscribe');
+
+    this.firestore.collection(this.path).onSnapshot(snapshot => {
+      console.log('Snapshot');
+      const changes = snapshot.docChanges();
+      changes.forEach(change => {
+        if (change.type === "added") {
+          const recordData = change.doc.data();
+          listener(formatCreatedAt(recordData));
+        }
+      })
+    });
   }
 }
 
