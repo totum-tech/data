@@ -1,6 +1,8 @@
 /* CQRS */
 export { ICommandBus, ICommand, IAggregateRoot } from './cqrs/types';
 export { CommandBus, Command, AggregateRoot } from './cqrs';
+export * from './cqrs/query';
+export * from './cqrs/command';
 
 /* EVENT STORE */
 export { EventStore } from './event-store/event-store';

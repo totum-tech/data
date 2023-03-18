@@ -5,12 +5,13 @@ export interface IAggregateRoot {
   apply(event: IRecordedEvent): void;
 }
 
-export interface ICommand {
-  name: string;
+export interface ICommand<DomainCommand, Payload> {
+  name: DomainCommand,
+  data: Payload,
 }
 
 export interface ICommandBus {
   repo: EventStore;
 
-  execute(command: ICommand): Promise<void>;
+  execute(command: ICommand<any, any>): Promise<void>;
 }
