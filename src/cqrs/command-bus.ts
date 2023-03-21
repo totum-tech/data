@@ -6,5 +6,5 @@ export abstract class CommandBus implements ICommandBus {
   constructor(repo: EventStore) {
     this.repo = repo;
   }
-  abstract execute(command: ICommand): Promise<void>;
+  abstract execute(command: ICommand<any, any>): Promise<void>;
 }

@@ -9,6 +9,7 @@ function formatCreatedAt(snapshot) {
     createdAt: fromUnixTime(snapshot.createdAt.nanoseconds)
   }
 }
+
 class FirebaseEventStorage implements IStorage {
   firestore: firebase.firestore.Firestore;
   path: string;
