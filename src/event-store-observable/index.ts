@@ -1,4 +1,4 @@
-import {makeAutoObservable, observable} from "mobx";
+import {autorun, makeAutoObservable, observable} from "mobx";
 import { v4 } from 'uuid';
 
 function isEventRecorded(events, event) {
@@ -49,24 +49,42 @@ export class EventStore {
     });
   }
 
-  nextStreamEventRevision(streamId) {
+  nextStreamEventRevision(streamId: string): number {
     return this.events.filter(e => e.streamId).length;
   }
 
-  nextGlobalEventRevision() {
+  nextGlobalEventRevision(): number {
     return this.events.length;
+  }
+
+  eventsForStream(streamId: string) {
+    return this.events.filter(e => e.streamId === streamId);
+  }
+
+  getStream(streamId: string): EventStream {
+    return new EventStream({
+      streamId,
+      store: this
+    });
   }
 }
 
 export class EventStream {
   streamId: string;
-  events = []
-  storage = null;
+  events = observable([]);
+  store = null;
   constructor(params) {
-    this.storage = params.storage;
+    this.streamId = params.streamId;
+    this.store = params.store
+
+    autorun(() => {
+      const stream = this.store.events.filter(e => e.streamId);
+      this.events.replace(stream);
+    })
+    makeAutoObservable(this);
   }
 
   appendToStream(events: any[]) {
-
+    this.store.appendToStream(this.streamId, events);
   }
 }
