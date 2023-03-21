@@ -1,4 +1,4 @@
-import {autorun, makeAutoObservable, observable} from "mobx";
+import {autorun, flow, makeAutoObservable, makeObservable, observable} from "mobx";
 import { v4 } from 'uuid';
 
 function isEventRecorded(events, event) {
@@ -8,6 +8,7 @@ function isEventRecorded(events, event) {
 export class EventStore {
   events = observable([])
   storage = null;
+
   constructor(params) {
     makeAutoObservable(this);
     this.storage = params.storage;
@@ -50,7 +51,7 @@ export class EventStore {
   }
 
   nextStreamEventRevision(streamId: string): number {
-    return this.events.filter(e => e.streamId).length;
+    return this.events.filter(e => e.streamId === streamId).length;
   }
 
   nextGlobalEventRevision(): number {
@@ -78,7 +79,7 @@ export class EventStream {
     this.store = params.store
 
     autorun(() => {
-      const stream = this.store.events.filter(e => e.streamId);
+      const stream = this.store.events.filter(e => e.streamId === this.streamId);
       this.events.replace(stream);
     })
     makeAutoObservable(this);
