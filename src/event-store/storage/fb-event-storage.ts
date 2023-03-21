@@ -1,12 +1,11 @@
 import { IRecordedEvent, IStorage } from '../types';
 import firebase from 'firebase';
 import 'firebase/firestore';
-import {fromUnixTime} from 'date-fns';
 
 function formatCreatedAt(snapshot) {
   return {
     ...snapshot,
-    createdAt: fromUnixTime(snapshot.createdAt.nanoseconds)
+    createdAt: snapshot.createdAt.toDate()
   }
 }
 

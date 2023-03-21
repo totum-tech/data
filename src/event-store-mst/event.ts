@@ -1,9 +1,8 @@
 import {Instance, types} from "mobx-state-tree";
 import {parseISO} from "date-fns";
 
-export const GenericData = types.model('GenericData', {
-  message: types.string,
-});
+export const GenericData = types.frozen();
+
 export const RecordedEvent = types.model('RecordedEvent', {
   id: types.identifier,
   streamId: types.string,

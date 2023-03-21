@@ -23,3 +23,4 @@ export { default as FirebaseEventStorage } from './event-store/storage/fb-event-
 export { default as MemoryEventStorage } from './event-store/storage/memory-event-storage';
 export { default as SupabaseEventStorage } from './event-store/storage/supabase-event-storage';
 export {RecordedEvent} from "./event-store-mst/event";
+export * as Observable from './event-store-observable';

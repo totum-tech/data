@@ -14,6 +14,11 @@ class SupabaseEventStorage implements IStorage {
     return;
   }
 
+  async saveMultiple(events: IRecordedEvent[]) : Promise<void> {
+    await this.supabase.from('events').insert(events);
+    return;
+  }
+
   async load(): Promise<IRecordedEvent[]> {
     let {
       data: events, error
