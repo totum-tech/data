@@ -62,6 +62,10 @@ export class EventStore {
     return this.events.filter(e => e.streamId === streamId);
   }
 
+  readStream(streamId: string) {
+    return this.eventsForStream(streamId);
+  }
+
   getStream(streamId: string): EventStream {
     return new EventStream({
       streamId,

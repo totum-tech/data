@@ -1,12 +1,21 @@
 import { IRecordedEvent, IStorage } from '../types';
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
-function formatCreatedAt(snapshot) {
-  return {
-    ...snapshot,
-    createdAt: snapshot.createdAt.toDate()
+function formatDatesInSnapshot(snapshot) {
+  const formattedSnapshot = {};
+
+  for (const key in snapshot) {
+    if (snapshot.hasOwnProperty(key)) {
+      if (typeof snapshot[key]?.toDate === 'function') {
+        formattedSnapshot[key] = snapshot[key].toDate();
+      } else {
+        formattedSnapshot[key] = snapshot[key];
+      }
+    }
   }
+
+  return formattedSnapshot;
 }
 
 class FirebaseEventStorage implements IStorage {
@@ -35,7 +44,7 @@ class FirebaseEventStorage implements IStorage {
         globalEventPosition: eventData.globalEventPosition,
         type: eventData.type,
         createdAt: createdAt.toDate(),
-        data: eventData.data,
+        data: formatDatesInSnapshot(eventData.data),
         metadata: eventData.metadata,
       };
     });
@@ -50,7 +59,7 @@ class FirebaseEventStorage implements IStorage {
         changes.forEach(change => {
           if (change.type === "added") {
             const recordData = change.doc.data();
-            listener(formatCreatedAt(recordData));
+            listener(formatDatesInSnapshot(recordData));
           }
         });
       });
