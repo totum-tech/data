@@ -1,6 +1,6 @@
 import { IRecordedEvent, IStorage } from '../types';
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 function formatCreatedAt(snapshot) {
   return {
