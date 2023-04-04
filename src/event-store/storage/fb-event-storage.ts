@@ -7,7 +7,7 @@ function formatDatesInSnapshot(snapshot) {
 
   for (const key in snapshot) {
     if (snapshot.hasOwnProperty(key)) {
-      if (typeof snapshot[key].toDate === 'function') {
+      if (typeof snapshot[key]?.toDate === 'function') {
         formattedSnapshot[key] = snapshot[key].toDate();
       } else {
         formattedSnapshot[key] = snapshot[key];
@@ -44,7 +44,7 @@ class FirebaseEventStorage implements IStorage {
         globalEventPosition: eventData.globalEventPosition,
         type: eventData.type,
         createdAt: createdAt.toDate(),
-        data: eventData.data,
+        data: formatDatesInSnapshot(eventData.data),
         metadata: eventData.metadata,
       };
     });
