@@ -8,6 +8,7 @@ function isEventRecorded(events, event) {
 export class EventStore {
   events = observable([])
   storage = null;
+  unsubscribeStorageListener = null;
 
   constructor(params) {
     makeAutoObservable(this);
@@ -20,7 +21,7 @@ export class EventStore {
   async initialize() {
     const events = await this.storage.load();
     this.events.replace(events)
-    this.storage.subscribe(this.setEvent.bind(this))
+    this.unsubscribeStorageListener = this.storage.subscribe(this.setEvent.bind(this))
   }
 
   setEvent(event) {

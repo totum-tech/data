@@ -50,7 +50,7 @@ export interface IStorage {
   save(event: IRecordedEvent): Promise<void>;
   load(): Promise<IRecordedEvent[]>;
 
-  subscribe(listener) : void;
+  subscribe(listener) : () => void;
 }
 
 export type EmptyPayload = {};

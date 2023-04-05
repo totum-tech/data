@@ -51,7 +51,7 @@ class FirebaseEventStorage implements IStorage {
   }
 
   subscribe(listener) {
-    this.firestore.collection(this.path)
+    return this.firestore.collection(this.path)
       .orderBy("createdAt")
       .limitToLast(1)
       .onSnapshot(snapshot => {
