@@ -24,6 +24,16 @@ export class EventStore {
     this.unsubscribeStorageListener = this.storage.subscribe(this.setEvent.bind(this))
   }
 
+  async teardown() {
+    try {
+      console.info('EventStore#teardown')
+      this.unsubscribeStorageListener();
+      console.info('EventStore#teardown::success')
+    } catch (e) {
+      console.error('EventStore#teardown::error', e.message)
+    }
+  }
+
   setEvent(event) {
     if (!isEventRecorded(this.events, event)) {
       this.events.push(event);
