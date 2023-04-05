@@ -3,19 +3,27 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
 function formatDatesInSnapshot(snapshot) {
-  const formattedSnapshot = {};
+  function recursiveFormat(obj) {
+    const formattedObj = Array.isArray(obj) ? [] : {};
 
-  for (const key in snapshot) {
-    if (snapshot.hasOwnProperty(key)) {
-      if (typeof snapshot[key]?.toDate === 'function') {
-        formattedSnapshot[key] = snapshot[key].toDate();
-      } else {
-        formattedSnapshot[key] = snapshot[key];
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (obj[key] === null) {
+          formattedObj[key] = obj[key];
+        }  else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          formattedObj[key] = recursiveFormat(obj[key]);
+        } else if (typeof obj[key].toDate === 'function') {
+          formattedObj[key] = obj[key].toDate();
+        } else {
+          formattedObj[key] = obj[key];
+        }
       }
     }
+
+    return formattedObj;
   }
 
-  return formattedSnapshot;
+  return recursiveFormat(snapshot);
 }
 
 class FirebaseEventStorage implements IStorage {
