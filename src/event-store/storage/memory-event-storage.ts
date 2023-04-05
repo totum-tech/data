@@ -21,6 +21,7 @@ class InMemoryEventRepo implements IStorage {
   }
 
   subscribe(listener) {
+    return () => new Promise(resolve => resolve(null))
   }
 }
 

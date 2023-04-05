@@ -31,7 +31,7 @@ class SupabaseEventStorage implements IStorage {
     return events;
   }
 
-  subscribe(listener: any) : void {
+  subscribe(listener: any) : () => Promise<any> {
     this.channel
       .on(
         'postgres_changes',
@@ -39,6 +39,8 @@ class SupabaseEventStorage implements IStorage {
         payload => listener(payload.new)
       )
       .subscribe(status => console.info('EventStorage', status));
+
+    return () => this.supabase.removeChannel(this.channel)
   }
 
   async unsubscribe() : Promise<void> {

@@ -51,10 +51,11 @@ class FirebaseEventStorage implements IStorage {
   }
 
   subscribe(listener) {
-    return this.firestore.collection(this.path)
+    const unsubscriber = this.firestore.collection(this.path)
       .orderBy("createdAt")
       .limitToLast(1)
       .onSnapshot(snapshot => {
+        if (!snapshot) { return; }
         const changes = snapshot.docChanges();
         changes.forEach(change => {
           if (change.type === "added") {
@@ -63,6 +64,11 @@ class FirebaseEventStorage implements IStorage {
           }
         });
       });
+
+    return () => new Promise(resolve => {
+      unsubscriber();
+      resolve(undefined);
+    });
   }
 }
 
