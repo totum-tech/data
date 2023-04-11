@@ -1,5 +1,5 @@
-import { IRecordedEvent, IStorage } from '../types';
 import {RealtimeChannel, SupabaseClient} from "@supabase/supabase-js";
+import {IRecordedEvent, IStorage} from "../types";
 class SupabaseEventStorage implements IStorage {
   supabase: SupabaseClient;
   channel: RealtimeChannel;

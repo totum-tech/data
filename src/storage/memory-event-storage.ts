@@ -1,4 +1,4 @@
-import { IRecordedEvent, IStorage } from '../types';
+import {IRecordedEvent, IStorage} from "../types";
 
 class InMemoryEventRepo implements IStorage {
   events: IRecordedEvent[];

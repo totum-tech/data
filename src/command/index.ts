@@ -1,27 +1,23 @@
-import { ICommand } from './types';
-import { IEventStore } from "../event-store/types";
-import {flow} from "lodash";
+import { flow } from "lodash";
+import { EventStore } from '../event-store'
+
+export interface ICommand<DomainCommands, Payload> {
+  name: DomainCommands,
+  data: Payload,
+}
 
 export interface ICommandHandler {
   (command: ICommand<any, any> | ICommand<any, any>[]): Promise<void>
 }
-export class Command<ICommandPayload> implements ICommand<any, any> {
-  name: string;
-  data: ICommandPayload;
 
-  constructor(payload?: ICommandPayload) {
-    this.data = payload?? ({} as ICommandPayload);
-  }
-}
-
-export function createStreamReader(store: IEventStore) {
+export function createStreamReader(store: EventStore) {
   return function (streamId: string) {
     return store.readStream(streamId);
   }
 }
 
-export function createStreamAppender(store: IEventStore) {
-  return (streamId: string) => (events: any[]): Promise<any> => store.appendToStream(streamId, events);
+export function createStreamAppender(store: EventStore) {
+  return (streamId: string) => (events: any[]): Promise<any> => store.appendMultipleToStream(streamId, events);
 }
 
 function evolveWith(evolver: any) {
@@ -47,14 +43,10 @@ export interface IDecider<IDomainEntity, ICommand, IEvent> {
 }
 
 export interface ICommandHandlerParams<IDomainEntity, ICommand, IEvent> {
-  store: IEventStore
+  store: EventStore
   getStreamId: IGetStreamID<ICommand>
   evolver: IEvolver<IDomainEntity, IEvent>
   decider: IDecider<IDomainEntity, ICommand, IEvent>
-}
-
-export interface ICommandHandler {
-  (command: ICommand<any, any> | ICommand<any, any>[]): Promise<void>
 }
 
 export function createCommandHandler(params: ICommandHandlerParams<any, any, any>): ICommandHandler {

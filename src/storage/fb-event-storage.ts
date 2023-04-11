@@ -1,6 +1,6 @@
-import { IRecordedEvent, IStorage } from '../types';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
+import {IRecordedEvent, IStorage} from "../types";
 
 function formatDatesInSnapshot(snapshot) {
   function recursiveFormat(obj) {
@@ -8,12 +8,12 @@ function formatDatesInSnapshot(snapshot) {
 
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
-        if (obj[key] === null) {
-          formattedObj[key] = obj[key];
-        }  else if (typeof obj[key] === 'object' && obj[key] !== null) {
-          formattedObj[key] = recursiveFormat(obj[key]);
+        if (!obj[key]) {
+          formattedObj[key] = obj[key]
         } else if (typeof obj[key].toDate === 'function') {
           formattedObj[key] = obj[key].toDate();
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          formattedObj[key] = recursiveFormat(obj[key]);
         } else {
           formattedObj[key] = obj[key];
         }

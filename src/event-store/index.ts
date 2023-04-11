@@ -1,12 +1,13 @@
-import {autorun, flow, makeAutoObservable, makeObservable, observable} from "mobx";
+import {autorun, makeAutoObservable, observable} from "mobx";
 import { v4 } from 'uuid';
+import {IEvent, IEventStore, IEventStream, IRecordedEvent} from "../types";
 
 function isEventRecorded(events, event) {
-  const result = !!events.find(e => e.id === event.id);
-  return result;
+  return !!events.find(e => e.id === event.id);
 }
-export class EventStore {
-  events = observable([])
+
+export class EventStore implements IEventStore {
+  events = observable([]);
   storage = null;
   unsubscribeStorageListener = null;
 
@@ -18,9 +19,9 @@ export class EventStore {
       .catch(e => console.error(e.message));
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     const events = await this.storage.load();
-    this.events.replace(events)
+    events.forEach(event => this.setEvent(event));
     this.unsubscribeStorageListener = this.storage.subscribe(this.setEvent.bind(this))
   }
 
@@ -40,41 +41,56 @@ export class EventStore {
     }
   }
 
-  appendToStream(streamId: string, events: any[]) {
-    const eventsToAdd = events.map(eventData => ({
+  async appendToStream(streamId: string, event: IEvent<any, any>): Promise<{ nextExpectedStreamRevision: number }> {
+    const eventToAdd : IRecordedEvent = {
       id: v4(),
       streamId,
       // @ts-ignore
       streamEventRevision: this.nextStreamEventRevision(streamId),
       // @ts-ignore
       globalEventPosition: this.nextGlobalEventRevision(),
-      type: eventData.type,
+      type: event.type,
       createdAt: new Date(),
-      data: eventData.data,
+      data: event.data,
       // @ts-ignore
-      metadata: eventData.metadata ?? null,
-    }))
+      metadata: event.metadata ?? null,
+    }
 
-    eventsToAdd.forEach(event => {
-      this.events.push(event);
-      this.storage.save(event);
-    });
+    this.setEvent(eventToAdd);
+    await this.storage.save(eventToAdd);
+    return { nextExpectedStreamRevision: this.nextStreamEventRevision(streamId) }
+  }
+
+  async appendMultipleToStream(streamId: string, events: IEvent<any, any>[]): Promise<{ nextExpectedStreamRevision: number }> {
+    if (!events.length) {
+      throw new Error('No events provided to appendMultipleToStream');
+    }
+
+    for (const event of events) {
+      await this.appendToStream(streamId, event);
+    }
+
+    return { nextExpectedStreamRevision: this.nextStreamEventRevision(streamId) };
   }
 
   nextStreamEventRevision(streamId: string): number {
-    return this.events.filter(e => e.streamId === streamId).length;
+    return this.events.filter(e => e.streamId === streamId).length + 1;
   }
 
   nextGlobalEventRevision(): number {
     return this.events.length;
   }
 
-  eventsForStream(streamId: string) {
+  eventsForStream(streamId: string): IRecordedEvent[] {
     return this.events.filter(e => e.streamId === streamId);
   }
 
-  readStream(streamId: string) {
+  readStream(streamId: string): IRecordedEvent[] {
     return this.eventsForStream(streamId);
+  }
+
+  readAllStream(): IRecordedEvent[] {
+    return this.events;
   }
 
   getStream(streamId: string): EventStream {
@@ -85,7 +101,7 @@ export class EventStore {
   }
 }
 
-export class EventStream {
+export class EventStream implements IEventStream{
   streamId: string;
   events = observable([]);
   store = null;
@@ -100,7 +116,7 @@ export class EventStream {
     makeAutoObservable(this);
   }
 
-  appendToStream(events: any[]) {
-    this.store.appendToStream(this.streamId, events);
+  appendToStream(event: IEvent): Promise<{ nextExpectedStreamRevision: number }> {
+    return this.store.appendToStream(this.streamId, event);
   }
 }

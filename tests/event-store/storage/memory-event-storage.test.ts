@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import MemoryEventStorage from '../../../src/event-store/storage/memory-event-storage';
+import MemoryEventStorage from '../../../src/storage/memory-event-storage';
 
 describe('MemoryEventStorage', () => {
   let repoInstance;
