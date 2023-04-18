@@ -1,22 +1,19 @@
 
 type StreamId = string;
 
-export type IEvent<Data = any, Metadata = any> = {
-  type: string;
+export interface IEvent<Type = string, Data = Record<string, any>, Metadata = Record<string, any>> {
+  type: Type;
   data: Data;
-  metadata: Metadata;
+  metadata?: Metadata;
 }
 
-export type IRecordedEvent<Data = unknown, Metadata = unknown> = {
+export interface IRecordedEvent<Type = string, Data = Record<string, any>, Metadata = Record<string, any>> extends IEvent<Type, Data, Metadata> {
   id: string;
   streamId: StreamId;
   streamEventRevision: number;
   globalEventPosition: number;
-  type: string;
   createdAt: Date;
-  data: Data;
-  metadata: Metadata;
-};
+}
 
 export interface IStorage {
   save(event: IRecordedEvent): Promise<void>;

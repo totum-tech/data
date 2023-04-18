@@ -34,8 +34,8 @@ export interface IGetStreamID<ICommand> {
   (command: ICommand): string
 }
 
-export interface IEvolver<IDomainEntity, IEvent> {
-  (aggregate: IDomainEntity, event: IEvent): IDomainEntity
+export interface IEvolver<IDomainEntity, IRecordedEvent> {
+  (aggregate: IDomainEntity, event: IRecordedEvent): IDomainEntity
 }
 
 export interface IDecider<IDomainEntity, ICommand, IEvent> {
