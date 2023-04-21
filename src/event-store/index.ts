@@ -62,10 +62,6 @@ export class EventStore implements IEventStore {
   }
 
   async appendMultipleToStream(streamId: string, events: IEvent<any, any>[]): Promise<{ nextExpectedStreamRevision: number }> {
-    if (!events.length) {
-      throw new Error('No events provided to appendMultipleToStream');
-    }
-
     for (const event of events) {
       await this.appendToStream(streamId, event);
     }
