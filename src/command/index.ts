@@ -1,13 +1,10 @@
 import { flow } from "lodash";
 import { EventStore } from '../event-store'
 
-export interface ICommand<DomainCommands, Payload> {
-  name: DomainCommands,
-  data: Payload,
-}
+export type ICommand<Payload> = Payload
 
 export interface ICommandHandler {
-  (command: ICommand<any, any> | ICommand<any, any>[]): Promise<void>
+  (command: ICommand<any> | ICommand<any>[]): Promise<void>
 }
 
 export function createStreamReader(store: EventStore) {
@@ -55,7 +52,7 @@ export function createCommandHandler(params: ICommandHandlerParams<any, any, any
   const decideEvents = decideEventsWith(params.decider);
   const evolveEntity = evolveWith(params.evolver);
 
-  async function handleCommand(command: ICommand<any, any>): Promise<void> {
+  async function handleCommand(command: ICommand<any>): Promise<void> {
     const streamId = params.getStreamId(command);
 
     return flow([
@@ -66,13 +63,13 @@ export function createCommandHandler(params: ICommandHandlerParams<any, any, any
     ])(streamId);
   }
 
-  async function handleCommandArray(command: ICommand<any, any>[]): Promise<void> {
+  async function handleCommandArray(command: ICommand<any>[]): Promise<void> {
     for (const currentCommand of command) {
       await handleCommand(currentCommand);
     }
   }
 
-  return async function handleCommands(command: ICommand<any, any> | ICommand<any, any>[]): Promise<void> {
+  return async function handleCommands(command: ICommand<any> | ICommand<any>[]): Promise<void> {
     if (Array.isArray(command)) {
       return handleCommandArray(command);
     }
